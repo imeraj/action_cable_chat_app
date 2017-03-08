@@ -11,6 +11,13 @@ class MessagesController < ApplicationController
       ActionCable.server.broadcast 'room_channel',
                              content:  message.content,
                              username: message.user.username
+
+      message.mentions.each do |mention|
+        ActionCable.server.broadcast "room_channel_user_#{mention.id}",
+                            mention: true,
+                            content:  message.content,
+                            username: message.user.username
+      end
     else
       render 'index'
     end
